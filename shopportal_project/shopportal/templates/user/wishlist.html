@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Wishlist - ShopPortal{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h3 class="fw-bold mb-4"><i class="fas fa-heart me-2 text-danger"></i>My Wishlist</h3>
+  {% if items %}
+  <div class="row g-4">
+    {% for item in items %}
+    <div class="col-6 col-md-4 col-lg-3">
+      <div class="product-card h-100">
+        <div class="card-img-wrap">
+          {% if item.image1 %}
+          <img src="{{ url_for('static', filename='images/uploads/' + item.image1) }}" alt="{{ item.name }}">
+          {% else %}
+          <i class="fas fa-box fa-4x text-muted opacity-25"></i>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          <div class="product-name">{{ item.name }}</div>
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="price-final">₹{{ '{:,.0f}'.format(item.discount_price or item.price) }}</span>
+            {% if item.discount_price %}<span class="price-original">₹{{ '{:,.0f}'.format(item.price) }}</span>{% endif %}
+          </div>
+          <div class="d-flex gap-2">
+            <form action="{{ url_for('user.add_to_cart', pid=item.product_id) }}" method="POST" class="flex-grow-1">
+              <button class="btn-cart w-100"><i class="fas fa-cart-plus me-1"></i>Add to Cart</button>
+            </form>
+            <a href="{{ url_for('user.remove_from_wishlist', wid=item.id) }}" class="btn-wish text-danger border-danger"><i class="fas fa-trash"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state py-5">
+    <i class="fas fa-heart d-block"></i>
+    <h5>Your wishlist is empty</h5>
+    <p class="text-muted">Save products you love for later</p>
+    <a href="{{ url_for('user.shop') }}" class="btn btn-primary-custom mt-2">Browse Products</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

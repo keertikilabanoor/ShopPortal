@@ -1,0 +1,24 @@
+{% extends 'admin/base_admin.html' %}
+{% block page_title %}Registered Users{% endblock %}
+{% block content %}
+<div class="admin-table">
+  <table class="table table-hover mb-0">
+    <thead><tr><th>#</th><th>Name</th><th>Username</th><th>Email</th><th>Phone</th><th>City</th><th>Joined</th></tr></thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td class="fw-semibold">{{ u.full_name or '-' }}</td>
+        <td>{{ u.username }}</td>
+        <td class="text-muted">{{ u.email }}</td>
+        <td>{{ u.phone or '-' }}</td>
+        <td>{{ u.city or '-' }}</td>
+        <td class="text-muted">{{ u.created_at[:10] }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="text-center text-muted py-4">No users found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

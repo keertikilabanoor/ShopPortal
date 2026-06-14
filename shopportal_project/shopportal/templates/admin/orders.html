@@ -1,0 +1,31 @@
+{% extends 'admin/base_admin.html' %}
+{% block page_title %}{{ status + ' ' if status }}Orders{% endblock %}
+{% block content %}
+<div class="d-flex gap-2 mb-4 flex-wrap">
+  <a href="{{ url_for('admin.orders') }}" class="btn btn-sm {{ 'btn-primary' if not status else 'btn-outline-secondary' }}">All</a>
+  {% for s in ['New','Processing','Dispatched','Delivered','Cancelled'] %}
+  <a href="{{ url_for('admin.orders', status=s) }}" class="btn btn-sm {{ 'btn-primary' if status==s else 'btn-outline-secondary' }}">{{ s }}</a>
+  {% endfor %}
+</div>
+<div class="admin-table">
+  <table class="table table-hover mb-0">
+    <thead><tr><th>Order #</th><th>Customer</th><th>Phone</th><th>Amount</th><th>Payment</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+    <tbody>
+      {% for o in orders %}
+      <tr>
+        <td class="fw-semibold text-primary">{{ o.order_number }}</td>
+        <td>{{ o.full_name }}</td>
+        <td class="text-muted">{{ o.phone }}</td>
+        <td class="fw-bold text-danger">₹{{ '{:,.0f}'.format(o.total_amount) }}</td>
+        <td>{{ o.payment_method }}</td>
+        <td><span class="badge status-{{ o.status }}">{{ o.status }}</span></td>
+        <td class="text-muted">{{ o.created_at[:10] }}</td>
+        <td><a href="{{ url_for('admin.order_detail', oid=o.id) }}" class="btn btn-sm btn-outline-primary">View</a></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="8" class="text-center text-muted py-4">No orders found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

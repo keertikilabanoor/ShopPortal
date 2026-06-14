@@ -1,0 +1,35 @@
+{% extends 'admin/base_admin.html' %}
+{% block page_title %}Manage Products{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-4">
+  <a href="{{ url_for('admin.add_product') }}" class="btn btn-save"><i class="fas fa-plus me-2"></i>Add Product</a>
+</div>
+<div class="admin-table">
+  <table class="table table-hover mb-0">
+    <thead><tr><th>#</th><th>Image</th><th>Name</th><th>Brand</th><th>Category</th><th>Price</th><th>Stock</th><th>Featured</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for p in products %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{% if p.image1 %}<img src="{{ url_for('static', filename='images/uploads/' + p.image1) }}" style="width:45px;height:45px;object-fit:contain;border-radius:8px;background:#f8f9fa;">{% else %}<span class="text-muted">-</span>{% endif %}</td>
+        <td class="fw-semibold">{{ p.name }}</td>
+        <td class="text-muted">{{ p.brand_name or '-' }}</td>
+        <td><span class="badge bg-light text-dark">{{ p.cat_name or '-' }}</span></td>
+        <td>
+          <div class="fw-bold text-danger">₹{{ '{:,.0f}'.format(p.discount_price or p.price) }}</div>
+          {% if p.discount_price %}<small class="text-muted text-decoration-line-through">₹{{ '{:,.0f}'.format(p.price) }}</small>{% endif %}
+        </td>
+        <td><span class="badge {{ 'bg-success' if p.stock > 0 else 'bg-danger' }}">{{ p.stock }}</span></td>
+        <td>{% if p.is_featured %}<i class="fas fa-star text-warning"></i>{% else %}<i class="fas fa-star text-muted"></i>{% endif %}</td>
+        <td>
+          <a href="{{ url_for('admin.edit_product', pid=p.id) }}" class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-edit"></i></a>
+          <a href="{{ url_for('admin.delete_product', pid=p.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this product?')"><i class="fas fa-trash"></i></a>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="9" class="text-center text-muted py-4">No products found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

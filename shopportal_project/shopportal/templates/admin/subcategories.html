@@ -1,0 +1,25 @@
+{% extends 'admin/base_admin.html' %}
+{% block page_title %}Manage Subcategories{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-4">
+  <a href="{{ url_for('admin.add_subcategory') }}" class="btn btn-save"><i class="fas fa-plus me-2"></i>Add Subcategory</a>
+</div>
+<div class="admin-table">
+  <table class="table table-hover mb-0">
+    <thead><tr><th>#</th><th>Name</th><th>Category</th><th>Created</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for s in subcategories %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td class="fw-semibold">{{ s.name }}</td>
+        <td><span class="badge bg-light text-dark">{{ s.cat_name }}</span></td>
+        <td class="text-muted">{{ s.created_at[:10] }}</td>
+        <td><a href="{{ url_for('admin.delete_subcategory', sid=s.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete?')"><i class="fas fa-trash"></i></a></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="text-center text-muted py-4">No subcategories found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

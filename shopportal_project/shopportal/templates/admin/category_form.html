@@ -1,0 +1,17 @@
+{% extends 'admin/base_admin.html' %}
+{% block page_title %}{{ 'Edit' if category else 'Add' }} Category{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-6"><div class="form-card">
+  <h5 class="fw-bold mb-4">{{ 'Edit' if category else 'Add New' }} Category</h5>
+  <form method="POST">
+    <div class="mb-3"><label class="form-label">Category Name *</label>
+      <input type="text" name="name" class="form-control" value="{{ category.name if category else '' }}" required></div>
+    <div class="mb-4"><label class="form-label">Description</label>
+      <textarea name="description" class="form-control" rows="3">{{ category.description if category else '' }}</textarea></div>
+    <div class="d-flex gap-3">
+      <button type="submit" class="btn btn-save px-4">{{ 'Update' if category else 'Add' }} Category</button>
+      <a href="{{ url_for('admin.categories') }}" class="btn btn-outline-secondary px-4">Cancel</a>
+    </div>
+  </form>
+</div></div></div>
+{% endblock %}

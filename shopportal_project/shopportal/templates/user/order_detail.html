@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.order_number }} - ShopPortal{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0"><i class="fas fa-receipt me-2 text-warning"></i>Order Details</h3>
+    <a href="{{ url_for('user.orders') }}" class="btn btn-outline-secondary btn-sm">← Back to Orders</a>
+  </div>
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm mb-4" style="border-radius:16px;">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <div class="text-muted small">Order Number</div>
+              <h5 class="fw-bold text-primary mb-0">{{ order.order_number }}</h5>
+            </div>
+            <span class="order-badge badge-{{ order.status }} fs-6">{{ order.status }}</span>
+          </div>
+          <div class="row mb-4">
+            <div class="col-6"><div class="text-muted small">Date</div><div class="fw-semibold">{{ order.created_at[:10] }}</div></div>
+            <div class="col-6"><div class="text-muted small">Payment</div><div class="fw-semibold">{{ order.payment_method }}</div></div>
+          </div>
+          <h6 class="fw-bold mb-3">Items Ordered</h6>
+          {% for item in items %}
+          <div class="d-flex align-items-center gap-3 mb-3 p-3 bg-light rounded-3">
+            {% if item.image1 %}
+            <img src="{{ url_for('static', filename='images/uploads/' + item.image1) }}" class="cart-item-img" alt="">
+            {% else %}
+            <div class="cart-item-img d-flex align-items-center justify-content-center bg-white rounded"><i class="fas fa-box text-muted"></i></div>
+            {% endif %}
+            <div class="flex-grow-1">
+              <div class="fw-semibold">{{ item.name }}</div>
+              <small class="text-muted">Qty: {{ item.quantity }} × ₹{{ '{:,.0f}'.format(item.price) }}</small>
+            </div>
+            <div class="fw-bold text-danger">₹{{ '{:,.0f}'.format(item.price * item.quantity) }}</div>
+          </div>
+          {% endfor %}
+          <div class="border-top pt-3 mt-2">
+            <div class="d-flex justify-content-between fw-bold fs-5">
+              <span>Total Amount</span>
+              <span class="text-danger">₹{{ '{:,.0f}'.format(order.total_amount) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex gap-3">
+        <a href="{{ url_for('user.invoice', oid=order.id) }}" class="btn btn-outline-primary"><i class="fas fa-download me-2"></i>Download Invoice</a>
+        {% if order.status in ['New', 'Processing'] %}
+        <a href="{{ url_for('user.cancel_order', oid=order.id) }}" class="btn btn-outline-danger" onclick="return confirm('Cancel this order?')"><i class="fas fa-times me-2"></i>Cancel Order</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm" style="border-radius:16px;">
+        <div class="card-body p-4">
+          <h6 class="fw-bold mb-3">Delivery Address</h6>
+          <p class="mb-1 fw-semibold">{{ order.full_name }}</p>
+          <p class="mb-1 text-muted">{{ order.phone }}</p>
+          <p class="mb-1 text-muted">{{ order.address }}</p>
+          <p class="mb-0 text-muted">{{ order.city }}, {{ order.state }} - {{ order.pincode }}</p>
+        </div>
+      </div>
+      <div class="card border-0 shadow-sm mt-3" style="border-radius:16px;">
+        <div class="card-body p-4">
+          <h6 class="fw-bold mb-3">Order Timeline</h6>
+          {% set statuses = ['New', 'Processing', 'Dispatched', 'Delivered'] %}
+          {% for s in statuses %}
+          <div class="d-flex align-items-center gap-3 mb-2">
+            <div class="rounded-circle d-flex align-items-center justify-content-center {{ 'bg-success text-white' if order.status == s or statuses.index(s) <= statuses.index(order.status) else 'bg-light text-muted' }}" style="width:32px;height:32px;font-size:12px;">
+              <i class="fas fa-check"></i>
+            </div>
+            <span class="{{ 'fw-semibold' if order.status == s }}">{{ s }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}My Orders - ShopPortal{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h3 class="fw-bold mb-4"><i class="fas fa-box me-2 text-warning"></i>My Orders</h3>
+  {% if orders %}
+  <div class="row g-3">
+    {% for o in orders %}
+    <div class="col-12">
+      <div class="card border-0 shadow-sm" style="border-radius:14px;">
+        <div class="card-body p-4">
+          <div class="row align-items-center">
+            <div class="col-md-3">
+              <div class="text-muted small">Order Number</div>
+              <div class="fw-bold text-primary">{{ o.order_number }}</div>
+            </div>
+            <div class="col-md-2">
+              <div class="text-muted small">Date</div>
+              <div class="fw-semibold">{{ o.created_at[:10] }}</div>
+            </div>
+            <div class="col-md-2">
+              <div class="text-muted small">Amount</div>
+              <div class="fw-bold text-danger">₹{{ '{:,.0f}'.format(o.total_amount) }}</div>
+            </div>
+            <div class="col-md-2">
+              <div class="text-muted small">Payment</div>
+              <div>{{ o.payment_method }}</div>
+            </div>
+            <div class="col-md-2">
+              <span class="order-badge badge-{{ o.status }}">{{ o.status }}</span>
+            </div>
+            <div class="col-md-1 text-end">
+              <a href="{{ url_for('user.order_detail', oid=o.id) }}" class="btn btn-sm btn-outline-primary">View</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state py-5">
+    <i class="fas fa-box d-block"></i>
+    <h5>No orders yet</h5>
+    <a href="{{ url_for('user.shop') }}" class="btn btn-primary-custom mt-2">Start Shopping</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

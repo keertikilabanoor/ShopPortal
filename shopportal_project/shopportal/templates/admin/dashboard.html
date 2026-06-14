@@ -1,0 +1,77 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Dashboard - Admin{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<!-- STAT CARDS -->
+<div class="row g-4 mb-4">
+  {% set cards = [
+    ('Total Brands', stats.brands, 'fa-trademark', '#4e73df', '#fff'),
+    ('Categories', stats.categories, 'fa-tags', '#1cc88a', '#fff'),
+    ('Products', stats.products, 'fa-box-open', '#f6c23e', '#fff'),
+    ('Registered Users', stats.users, 'fa-users', '#e74a3b', '#fff'),
+  ] %}
+  {% for label, val, icon, bg, fg in cards %}
+  <div class="col-6 col-md-3">
+    <div class="stat-card card">
+      <div class="card-body d-flex justify-content-between align-items-center" style="background:{{ bg }};border-radius:16px;">
+        <div>
+          <div class="text-white opacity-75 small fw-semibold">{{ label }}</div>
+          <div class="text-white fs-2 fw-bold">{{ val }}</div>
+        </div>
+        <div class="stat-icon" style="background:rgba(255,255,255,0.2);">
+          <i class="fas {{ icon }} text-white"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- ORDER STATS -->
+<div class="row g-4 mb-4">
+  <div class="col-12"><h5 class="fw-bold mb-3">Order Statistics</h5></div>
+  {% set order_cards = [
+    ('New Orders', stats.new_orders, 'fa-bell', '#fff3cd', '#856404'),
+    ('Processing', stats.processing, 'fa-cog', '#cfe2ff', '#084298'),
+    ('Dispatched', stats.dispatched, 'fa-truck', '#d1ecf1', '#0c5460'),
+    ('Delivered', stats.delivered, 'fa-check-circle', '#d4edda', '#155724'),
+    ('Cancelled', stats.cancelled, 'fa-times-circle', '#f8d7da', '#721c24'),
+    ('Pending Reviews', stats.pending_reviews, 'fa-star', '#fff3cd', '#856404'),
+  ] %}
+  {% for label, val, icon, bg, color in order_cards %}
+  <div class="col-6 col-md-4 col-lg-2">
+    <div class="card border-0 shadow-sm text-center py-3" style="border-radius:14px;background:{{ bg }};">
+      <i class="fas {{ icon }} mb-2" style="font-size:1.8rem;color:{{ color }};"></i>
+      <div class="fw-bold" style="font-size:1.5rem;color:{{ color }};">{{ val }}</div>
+      <div class="small" style="color:{{ color }};">{{ label }}</div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- RECENT ORDERS -->
+<div class="admin-table">
+  <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+    <h6 class="fw-bold mb-0">Recent Orders</h6>
+    <a href="{{ url_for('admin.orders') }}" class="btn btn-sm btn-outline-primary">View All</a>
+  </div>
+  <table class="table table-hover mb-0">
+    <thead><tr>
+      <th>Order #</th><th>Customer</th><th>Amount</th><th>Payment</th><th>Status</th><th>Date</th><th>Action</th>
+    </tr></thead>
+    <tbody>
+      {% for o in recent_orders %}
+      <tr>
+        <td class="fw-semibold text-primary">{{ o.order_number }}</td>
+        <td>{{ o.full_name }}</td>
+        <td class="fw-bold text-danger">₹{{ '{:,.0f}'.format(o.total_amount) }}</td>
+        <td>{{ o.payment_method }}</td>
+        <td><span class="badge status-{{ o.status }}">{{ o.status }}</span></td>
+        <td class="text-muted">{{ o.created_at[:10] }}</td>
+        <td><a href="{{ url_for('admin.order_detail', oid=o.id) }}" class="btn btn-xs btn-outline-primary btn-sm">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
